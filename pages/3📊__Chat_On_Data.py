@@ -1,4 +1,3 @@
-from langserve.client import RemoteRunnable
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Pinecone
 from langchain_openai import OpenAIEmbeddings

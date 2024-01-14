@@ -1,5 +1,3 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import Pinecone
 from langchain.schema.output_parser import StrOutputParser
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
