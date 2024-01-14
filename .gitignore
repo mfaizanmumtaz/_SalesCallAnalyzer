@@ -2,3 +2,4 @@ main.ipynb
 instructions
 __pycache__
 app.py
+.env

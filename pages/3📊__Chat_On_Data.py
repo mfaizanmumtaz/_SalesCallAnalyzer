@@ -58,14 +58,14 @@ for msg in msgs.messages:
 
 if prompt := st.chat_input():
     st.chat_message("human",avatar=USER_AVATAR).write(prompt)
-    msgs.add_user_message(prompt)
 
     with st.chat_message("assistant",avatar=BOT_AVATAR):
         message_placeholder = st.empty()
         full_response = ""
         
-        messages = st.session_state.rag_langchain_messages[0:40]
+        messages = st.session_state.rag_langchain_messages[1:40]
         chat_history = [(messages[i].content, messages[i+1].content) for i in range(0, len(messages)-1, 2)]
+        st.write(chat_history)
 
         with st.spinner("Thinking..."):
             from ScaProjectRag.chain import chain as conversation_chain
@@ -76,4 +76,5 @@ if prompt := st.chat_input():
                 message_placeholder.markdown(full_response + "|")
                 message_placeholder.markdown(full_response)
 
+        msgs.add_user_message(prompt)
         msgs.add_ai_message(full_response)

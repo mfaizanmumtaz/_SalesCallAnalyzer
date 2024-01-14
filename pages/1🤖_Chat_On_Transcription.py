@@ -29,6 +29,7 @@ SystemMessagePromptTemplate.from_template(
     msgs = StreamlitChatMessageHistory(key="langchain_messages")
     if len(msgs.messages) == 0:
         msgs.add_ai_message("Hello! How can I assist you today?")
+
     llm_chain = RunnablePassthrough() | prompt | ChatOpenAI(model="gpt-4-1106-preview")
 
     USER_AVATAR = "👤"
@@ -40,12 +41,11 @@ SystemMessagePromptTemplate.from_template(
 
     if prompt := st.chat_input():
         st.chat_message("human",avatar=USER_AVATAR).write(prompt)
-        msgs.add_user_message(prompt)
 
         with st.chat_message("assistant",avatar=BOT_AVATAR):
             message_placeholder = st.empty()
             full_response = ""
-
+            
             response = llm_chain.stream({"question":prompt,"chat_history":st.session_state.
                                         langchain_messages[0:40]})
             for res in response:
@@ -53,6 +53,7 @@ SystemMessagePromptTemplate.from_template(
                 message_placeholder.markdown(full_response + "|")
                 message_placeholder.markdown(full_response)
 
+            msgs.add_user_message(prompt)
             msgs.add_ai_message(full_response)
 
 if "transcript" in st.session_state:
