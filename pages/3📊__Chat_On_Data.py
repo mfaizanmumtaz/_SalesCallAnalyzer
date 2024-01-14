@@ -68,7 +68,7 @@ if prompt := st.chat_input():
         chat_history = [(messages[i].content, messages[i+1].content) for i in range(0, len(messages)-1, 2)]
 
         with st.spinner("Thinking..."):
-            from ..ScaProjectRag.chain import chain as conversation_chain
+            from ScaProjectRag.chain import chain as conversation_chain
             response = conversation_chain.stream({"question":prompt,"chat_history":chat_history})
 
             for res in response:
