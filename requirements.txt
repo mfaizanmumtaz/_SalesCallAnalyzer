@@ -9,5 +9,3 @@ langserve==0.0.39
 pinecone_client==2.2.4
 PyPDF2==3.0.1
 streamlit==1.29.0
-
-rsync -av --exclude='.git' /home/faizan/Documents/GenerativeAI/SalesCallAnalyzer/* /home/faizan/Documents/GenerativeAI/_SalesCallAnalyzer
