@@ -37,7 +37,10 @@ if "transcript" in st.session_state:
     
     perform_and_display_analysis("sales_techniques", sales_techniques, "Employee Sales Techniques")
 
+    perform_and_display_analysis("summary_chain", summarizer_prompt, "Summary")
+    
     perform_and_display_analysis("sentiment_chain", sentiment_chain, "Overall Customer Sentiment")
+
 
 else:
     st.info("Please upload your audio first on the homepage.")
