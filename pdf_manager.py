@@ -1,35 +1,68 @@
 import streamlit as st
-from fpdf import FPDF
-import tempfile
-
-from fpdf import FPDF
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import pagesizes
 import tempfile
 
 def create_pdf(text):
-    """Create a PDF with the given text and save to a temporary file."""
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    
-    # Define the width for wrapping the text (width of the page minus margins)
-    effective_page_width = pdf.w - 2*pdf.l_margin
-    
-    # Split the text into lines, wrapping the text to fit the page width
-    pdf.multi_cell(effective_page_width, 6, text)
-    
-    # Save the PDF to a temporary file
+    # Create a temporary file
     temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    pdf.output(temp_pdf.name)
-    return temp_pdf
 
+    # Create a canvas linked to the temporary file
+    c = canvas.Canvas(temp_pdf.name, pagesize=letter)
+    width, height = letter
+
+    # Set up basic parameters
+    font_name = "Helvetica"
+    font_size = 12
+    line_height = 14
+    margin = 72
+    x = margin
+    y = height - margin
+    max_width = width - 2 * margin
+
+    c.setFont(font_name, font_size)
+
+    # Function to wrap text
+    def wrap_text(text, max_width):
+        lines = []
+        for paragraph in text.split('\n'):
+            line = []
+            width = 0
+            for word in paragraph.split():
+                word_width = c.stringWidth(word, font_name, font_size)
+                if width + word_width <= max_width:
+                    line.append(word)
+                    width += word_width + c.stringWidth(' ', font_name, font_size)
+                else:
+                    lines.append(' '.join(line))
+                    line = [word]
+                    width = word_width
+            lines.append(' '.join(line))
+        return lines
+
+    # Wrap and draw each line
+    for line in wrap_text(text, max_width):
+        c.drawString(x, y, line)
+        y -= line_height
+        if y < margin:
+            c.showPage()
+            c.setFont(font_name, font_size)
+            y = height - margin
+
+    # Save the PDF
+    c.save()
+
+    # Return the path to the temporary file
+    return temp_pdf
 
 def download_pdf(user_input,file_name):
     temp_pdf = create_pdf(user_input)
     with open(temp_pdf.name, "rb") as file:
         st.download_button(
-            label="Download In PDF",
+            label="Download As PDF",
             data=file,
             file_name=f"{file_name}.pdf",
             mime="application/pdf"
         )
-    temp_pdf.close() 
+    temp_pdf.close()

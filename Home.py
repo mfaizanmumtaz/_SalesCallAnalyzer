@@ -25,7 +25,9 @@ def _transcriber(audio_file):
             return "".join([f"Speaker {utterance.speaker}: {utterance.text}\n\n" for utterance in transcript])
 
         except Exception as e:
-            st.warning("An error occurred:", e)
+            st.warning(f"An error occurred: {e}")
+            return None
+        
         finally:
             os.remove(audio_file_path)
 
@@ -35,16 +37,18 @@ def main():
 
     if audio_file is not None:
         if "transcript" not in st.session_state:
-            st.session_state.transcript = _transcriber(audio_file)
+            response = _transcriber(audio_file)
+            if response is not None:
+                st.session_state.transcript = response
 
 if __name__ == "__main__":
     main()
 
 if "transcript" in st.session_state:
         with st.expander("View Audio Transcription"):
-            st.write(st.session_state["transcript"])
-
-            download_pdf(st.session_state["transcript"],"transcript")
+            transcript = st.session_state["transcript"]
+            st.write(transcript)
+            download_pdf(transcript,"transcript")
 
         st.success("Audio successfully transcribed. Please navigate to the sidebar pages for actions.")
         st.sidebar.success("Select Above Options.")

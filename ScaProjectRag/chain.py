@@ -16,11 +16,24 @@ from langchain.schema.runnable import (
 )
 
 PINECONE_INDEX_NAME = "sca-project-rag"
-
 embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
 
-vectorstore = Pinecone.from_existing_index(PINECONE_INDEX_NAME,embeddings)
+# from langchain_community.document_loaders import PyPDFDirectoryLoader
+# loader = PyPDFDirectoryLoader("ScaProjectRag/pdfs")
+# data = loader.load()
 
+# print("data has been loaded.")
+# # Split
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=150)
+# all_splits = text_splitter.split_documents(data)
+
+# vectorstore = Pinecone.from_documents(
+#     documents=all_splits, embedding=OpenAIEmbeddings(), index_name=PINECONE_INDEX_NAME
+# )
+# retriever = vectorstore.as_retriever()
+
+vectorstore = Pinecone.from_existing_index(PINECONE_INDEX_NAME, OpenAIEmbeddings())
 retriever = vectorstore.as_retriever()
 
 openai = ChatOpenAI(model="gpt-3.5-turbo-1106")

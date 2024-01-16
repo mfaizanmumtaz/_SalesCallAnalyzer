@@ -1,47 +1,10 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Pinecone
-from langchain_openai import OpenAIEmbeddings
-import PyPDF2,os
-import pinecone
+from langchain.schema.messages import HumanMessage,AIMessage
+from pdf_manager import download_pdf
 import streamlit as st
 
 st.set_page_config(page_title="Chat On Data", page_icon="🤖")
 st.title("Chat On Data 💬")
-
-pinecone.init(
-    api_key=os.getenv("PINECONE_API_KEY"),  # find at app.pinecone.io
-    environment=os.getenv("PINECONE_ENVIRONMENT"),  # next to api key in console
-)
-
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
-PINECONE_INDEX_NAME = "sca-project-rag"
-
-def read_pdf_content(pdf_path):
-
-        pdf_reader = PyPDF2.PdfReader(pdf_path)
-
-        full_text = ""
-
-        for page in pdf_reader.pages:
-            full_text += page.extract_text() + "\n"
-
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=150)
-        texts = text_splitter.split_text(full_text)
-
-        index = pinecone.Index(PINECONE_INDEX_NAME)
-
-        vectorstore = Pinecone(index,embeddings,text_key="text")
-
-        vectorstore.add_texts(texts)
-
-upload_pdf = st.file_uploader(
-    "Upload a PDF file", type=["pdf"], accept_multiple_files=False
-)
-
-if upload_pdf is not None:
-    with st.spinner("Processing PDF..."):
-        pdf_content = read_pdf_content(upload_pdf)
-        st.success("The PDF has been embedded into the database.")
         
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 
@@ -51,6 +14,16 @@ if len(msgs.messages) == 0:
 
 USER_AVATAR = "👤"
 BOT_AVATAR = "🤖"
+
+chat = st.session_state["rag_langchain_messages"]
+chat_messages = ""
+for mess in chat:
+    if isinstance(mess,HumanMessage):
+        chat_messages += f"User: {mess.content}\n\n"
+    elif isinstance(mess,AIMessage):
+        chat_messages += f"Assistant: {mess.content}\n\n"
+
+download_pdf(chat_messages,"Chat")
 
 for msg in msgs.messages:
     avatar = USER_AVATAR if msg.type == "human" else BOT_AVATAR
@@ -62,7 +35,7 @@ if prompt := st.chat_input():
     with st.chat_message("assistant",avatar=BOT_AVATAR):
         message_placeholder = st.empty()
         full_response = ""
-        
+        # manage history
         messages = st.session_state.rag_langchain_messages[1:40]
         chat_history = [(messages[i].content, messages[i+1].content) for i in range(0, len(messages)-1, 2)]
 

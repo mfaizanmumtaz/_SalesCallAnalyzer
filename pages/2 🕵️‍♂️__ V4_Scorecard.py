@@ -2,13 +2,13 @@ import sys,os
 import streamlit as st
 from pdf_manager import download_pdf
 
-st.set_page_config(page_title="Analyzer", page_icon="🕵️‍♂️")
-st.title("Transcription Analyzer 🕵️‍♂️")
-
 parent_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parent_dir)
 
 from main import *
+
+st.set_page_config(page_title="Analyzer", page_icon="🕵️‍♂️")
+st.title("V4 Scorecard 🕵️‍♂️")
 
 def perform_and_display_analysis(chain_key, analysis_function, expander_title):
     if st.button(f"Analyze {expander_title}"):

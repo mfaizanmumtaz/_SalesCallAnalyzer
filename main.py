@@ -21,7 +21,7 @@ prompt = ChatPromptTemplate.from_messages([
 
 Carefully review the advisor's phone call transcription with the customer. Ensure you fully grasp the content, especially considering the UK's financial regulations and practices, before proceeding to conclusions or decisions.
 
-Address the following question based on your analysis of the transcription. Format your responses in this manner:
+Address the following questions based on your analysis of the transcription. Format your responses in this manner:
 
 Questions : {question}
 Answer: [Provide a 'Yes' or 'No' answer, based on your analysis within the context of the UK business system]
