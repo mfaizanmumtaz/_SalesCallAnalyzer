@@ -7,3 +7,4 @@ langchain_openai==0.0.2.post1
 reportlab==3.6.8
 streamlit==1.29.0
 pinecone-client
+openai
