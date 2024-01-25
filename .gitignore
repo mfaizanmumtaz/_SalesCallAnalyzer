@@ -3,3 +3,6 @@ instructions
 __pycache__
 app.py
 .env
+transcript.pdf
+QuickStart_Deepgram_Pre_Recorded_Audio_Notebook_v8lcmj.ipynb
+.vscode

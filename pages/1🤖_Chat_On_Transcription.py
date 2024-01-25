@@ -31,7 +31,7 @@ SystemMessagePromptTemplate.from_template(
     if len(msgs.messages) == 0:
         msgs.add_ai_message("Hello! How can I assist you today?")
 
-    llm_chain = prompt | ChatOpenAI(model="gpt-3.5-turbo")
+    llm_chain = prompt | ChatOpenAI(model="gpt-4-1106-preview")
     USER_AVATAR = "👤"
     BOT_AVATAR = "🤖"
     

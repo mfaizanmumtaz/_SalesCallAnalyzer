@@ -4,7 +4,7 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
 
-google = ChatGoogleGenerativeAI(model="gemini-pro").with_fallbacks([ChatOpenAI(model="gpt-4-1106-preview")])
+openai_gpt3 = ChatOpenAI(model="gpt-3.5-turbo-1106").with_fallbacks([ChatOpenAI(model="gpt-4-1106-preview")])
 
 openai = ChatOpenAI(model="gpt-4-1106-preview")
 
@@ -105,12 +105,12 @@ which is delimited with XML tag in a single paragraph. Then write a markdown lis
     
 > <Employee phone call transcription with customer>: {transcription} <Employee phone call transcription with customer>""")
 
-]) | google | StrOutputParser()
+]) | openai_gpt3 | StrOutputParser()
 
 sentiment_chain = ChatPromptTemplate.from_messages([
 ("user","""You are customer support call sentiment analyzer (call transcription is delimited with XML tags).Please follow these steps to complete the task:
     
-> Identify the list of emotions that the customer is expressing in the call. include no more than five\
+> Identify the list of emotions that the customer is expressing in the call. include no more than five \
 items in list. Format you answer as a list of lower-case words separated by commas.
 > Indentify overall customer Sentiment (positive or negative)
 > Please do your best it is very important to my career.
@@ -119,4 +119,4 @@ items in list. Format you answer as a list of lower-case words separated by comm
     
 > <Employee phone call transcription with customer>: {transcription} <Employee phone call transcription with customer>""")
 
-]) | google | StrOutputParser()
+]) | openai_gpt3 | StrOutputParser()

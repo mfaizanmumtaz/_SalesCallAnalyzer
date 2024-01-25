@@ -41,6 +41,5 @@ if "transcript" in st.session_state:
     
     perform_and_display_analysis("sentiment_chain", sentiment_chain, "Overall Customer Sentiment")
 
-
 else:
     st.info("Please upload your audio first on the homepage.")

@@ -61,7 +61,6 @@ ANSWER_PROMPT = ChatPromptTemplate.from_messages(
 # Conversational Retrieval Chain
 DEFAULT_DOCUMENT_PROMPT = PromptTemplate.from_template(template="{page_content}")
 
-
 def _combine_documents(
     docs, document_prompt=DEFAULT_DOCUMENT_PROMPT, document_separator="\n\n"
 ):
