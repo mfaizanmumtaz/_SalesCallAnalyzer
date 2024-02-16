@@ -1,10 +1,9 @@
 import assemblyai as aai
 import streamlit as st
 from pdf_manager import download_pdf
-import os,json
+import os
 # from dotenv import load_dotenv
 # load_dotenv()
-aai.settings.api_key = "b5db2155532d433c8f51156dcae77412"
 
 st.set_page_config("Phone Call Analyzer", layout="wide",page_icon="icons/ico.png")
 
