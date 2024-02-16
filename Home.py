@@ -1,9 +1,10 @@
-from deepgram import DeepgramClient,FileSource,PrerecordedOptions
+import assemblyai as aai
 import streamlit as st
 from pdf_manager import download_pdf
 import os,json
 # from dotenv import load_dotenv
 # load_dotenv()
+aai.settings.api_key = "b5db2155532d433c8f51156dcae77412"
 
 st.set_page_config("Phone Call Analyzer", layout="wide",page_icon="icons/ico.png")
 
@@ -19,32 +20,19 @@ def _transcriber(audio_file):
             with open(audio_file_path, "wb") as file:
                 file.write(audio_file.read())
 
-            deepgram = DeepgramClient(os.environ.get("DG_API_KEY"))
-
-            with open(audio_file_path, "rb") as file:
-                buffer_data = file.read()
-
-            payload: FileSource = {
-                "buffer": buffer_data}
-
-            options = PrerecordedOptions(
-                smart_format = True,
-                diarize=True,
-                paragraphs=True,
-                punctuate=True,
-                model = 'nova-2',
-            )
-            file_response = deepgram.listen.prerecorded.v("1").transcribe_file(payload, options)
-
-            return json.loads(file_response.to_json())['results']['channels'][0]['alternatives'][0]["paragraphs"]["transcript"]
+            config = aai.TranscriptionConfig(
+                speaker_labels=True)
+            
+            transcriber = aai.Transcriber()
+            transcript = transcriber.transcribe(audio_file_path, config).utterances 
+            return "".join([f"Speaker {utterance.speaker}: {utterance.text}\n\n" for utterance in transcript])
 
         except Exception as e:
-            st.warning(f"An error occurred: {e}")
+            st.warning("Error",e)
             return None
-        
-        finally:
-            os.remove(audio_file_path)
 
+        finally:
+            os.remove(audio_file_path) 
 
 audio_file = st.file_uploader("**Please Upload Audio File**",type=["wav", "mp3", "m4a", "ogg"])
 
@@ -57,7 +45,6 @@ if st.button("Submit"):
             response = _transcriber(audio_file)
             if response is not None:
                 st.session_state.transcript = response
-    
     else:
         st.warning("Please upload audio file.")
 

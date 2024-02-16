@@ -20,7 +20,7 @@ def perform_and_display_analysis(chain_key, analysis_function, expander_title):
     if chain_key in st.session_state:
         with st.expander(expander_title):
             st.markdown(st.session_state[chain_key], unsafe_allow_html=True)
-            if Quality_Assurance_Scorecard_Chain:
+            if Money_Advisor_Scorecard:
                 
                 fixing_line_issue = st.session_state[chain_key].replace("<br>","\n")
                 download_pdf(fixing_line_issue, expander_title)
@@ -29,17 +29,17 @@ def perform_and_display_analysis(chain_key, analysis_function, expander_title):
 
 if "transcript" in st.session_state:
 
-    perform_and_display_analysis("Quality_Assurance_Scorecard_Chain", Quality_Assurance_Scorecard_Chain, "Quality Assurance For Mortgage And Equity Release")
+    perform_and_display_analysis("Quality_Assurance_Scorecard_Chain", Money_Advisor_Scorecard, "Quality Assurance For Mortgage And Equity Release")
 
     perform_and_display_analysis("vulnerability_prompt_chain", vulnerability_prompt_chain, "Vulnerability")
 
-    perform_and_display_analysis("objection_prompt", objection_prompt, "Customer Objections")
+    # perform_and_display_analysis("objection_prompt", objection_prompt, "Customer Objections")
     
-    perform_and_display_analysis("sales_techniques", sales_techniques, "Employee Sales Techniques")
+    perform_and_display_analysis("sales_techniques", sales_techniques, "Soft Skills")
 
     perform_and_display_analysis("summary_chain", summarizer_prompt, "Summary")
     
-    perform_and_display_analysis("sentiment_chain", sentiment_chain, "Overall Customer Sentiment")
+    # perform_and_display_analysis("sentiment_chain", sentiment_chain, "Overall Customer Sentiment")
 
 else:
     st.info("Please upload your audio first on the homepage.")
