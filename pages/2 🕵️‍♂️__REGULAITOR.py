@@ -1,17 +1,23 @@
 from langchain_core.runnables import RunnablePassthrough
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema.output_parser import StrOutputParser
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
+import os
+import streamlit as st
+from pdf_manager import download_pdf
+
 import warnings
 warnings.filterwarnings("ignore")
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
+st.set_page_config(page_title="Analyzer", page_icon="🕵️‍♂️")
+st.title("REGULAITOR")
+
 openai_gpt3 = ChatOpenAI(model="gpt-3.5-turbo-1106").with_fallbacks([ChatOpenAI(model="gpt-4-1106-preview")])
 
 openai = ChatOpenAI(model="gpt-4-1106-preview")
-openai = ChatGoogleGenerativeAI(model='gemini-pro')
+
 # Getting data from utils.py
 from utils import get_data
 GetData = get_data()
@@ -91,4 +97,45 @@ which is delimited with XML tag in a single paragraph. Then write a markdown lis
     
 > <Employee phone call transcription with customer>: {transcription} <Employee phone call transcription with customer>""")
 
-]) | openai | StrOutputParser()
+]) | openai_gpt3 | StrOutputParser()
+
+def perform_and_display_analysis(chain_key, analysis_function, expander_title):
+
+    if st.button(f"Analyze {expander_title}"):
+        if chain_key not in st.session_state:
+            with st.spinner("Please wait..."):
+                try:
+                    res = analysis_function.invoke({"transcription": st.session_state["transcript"]})
+                    st.session_state[chain_key] = res
+
+                except Exception as e:
+                    st.error(e)
+
+    if chain_key in st.session_state:
+        with st.expander(expander_title):
+            st.markdown(st.session_state[chain_key], unsafe_allow_html=True)
+            if Money_Advisor_Scorecard:
+                
+                fixing_line_issue = st.session_state[chain_key].replace("<br>","\n")
+                download_pdf(fixing_line_issue, expander_title)
+            else:
+                download_pdf(st.session_state[chain_key], expander_title)
+
+
+if "transcript" in st.session_state:
+    if 'api_key' not in st.session_state:
+        st.info("Please Enter Your OpenAI API Key To Continue.")
+        
+    if 'api_key' in st.session_state:
+        os.environ['OPENAI_API_KEY'] = st.session_state['api_key']
+
+        perform_and_display_analysis("Quality_Assurance_Scorecard_Chain", Money_Advisor_Scorecard, "Quality Assurance For Mortgage And Equity Release")
+
+        perform_and_display_analysis("vulnerability_prompt_chain", vulnerability_prompt_chain, "Vulnerability")
+        
+        perform_and_display_analysis("sales_techniques", sales_techniques, "Soft Skills")
+
+        perform_and_display_analysis("summary_chain", summarizer_prompt, "Summary")
+        
+else:
+    st.info("Please upload your audio first on the homepage.")

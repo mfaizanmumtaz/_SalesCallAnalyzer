@@ -11,6 +11,7 @@ from langchain.prompts import (
 )
 from langchain.schema.messages import HumanMessage,AIMessage
 from langchain_core.runnables import RunnablePassthrough
+import os
 
 st.set_page_config(page_title="Chat On Transcription", page_icon="🤖")
 st.title("Chat On Transcription 💬")
@@ -31,7 +32,9 @@ SystemMessagePromptTemplate.from_template(
     if len(msgs.messages) == 0:
         msgs.add_ai_message("Hello! How can I assist you today?")
 
+    os.environ["OPENAI_API_KEY"] = st.session_state["api_key"]
     llm_chain = prompt | ChatOpenAI(model="gpt-4-1106-preview")
+
     USER_AVATAR = "👤"
     BOT_AVATAR = "🤖"
     
@@ -56,17 +59,27 @@ SystemMessagePromptTemplate.from_template(
             message_placeholder = st.empty()
             full_response = ""
             
-            response = llm_chain.stream({"question":prompt,"chat_history":st.session_state.
+            try:
+                response = llm_chain.stream({"question":prompt,"chat_history":st.session_state.
                                         langchain_messages[0:40]})
-            for res in response:
-                full_response += res.content or "" 
-                message_placeholder.markdown(full_response + "|")
-                message_placeholder.markdown(full_response)
 
-            msgs.add_user_message(prompt)
-            msgs.add_ai_message(full_response)
+                for res in response:
+                    full_response += res.content or "" 
+                    message_placeholder.markdown(full_response + "|")
+                    message_placeholder.markdown(full_response)
+
+                msgs.add_user_message(prompt)
+                msgs.add_ai_message(full_response)
+
+            except Exception as e:
+                st.error(f"An error occured. {e}")
 
 if "transcript" in st.session_state:
-    main()
+    if 'api_key' not in st.session_state:
+        st.info("Please Enter Your OpenAI API Key To Continue.")
+        
+    if 'api_key' in st.session_state:
+        main()
+
 else:
     st.info("Please upload your audio first on the homepage.")
