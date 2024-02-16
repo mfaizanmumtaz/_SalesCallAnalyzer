@@ -2,8 +2,6 @@ import assemblyai as aai
 import streamlit as st
 from pdf_manager import download_pdf
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
 
 st.set_page_config("Phone Call Analyzer", layout="wide",page_icon="icons/ico.png")
 
